@@ -1,0 +1,154 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Provision resource dependencies for an Autoscaling Group",
+  "Parameters": {
+    "VpcID": {
+      "Description": "The vpcid to associate the security groups with.",
+      "Type": "AWS::EC2::VPC::Id",
+      "Default": "vpc-fb49319f"
+    },
+    "VPCSubnetIds": {
+      "Description": "The VPC subnets use for the database and to run the RDS configuration lambdas in",
+      "Type": "List<AWS::EC2::Subnet::Id>"
+    },
+    "ApplicationName" : {
+      "Description" : "CodeDeploy Application Name",
+      "Type": "String",
+      "Default": "Pricer"
+    }
+  },
+  "Resources": {
+    "CodeDeployApplication": {
+      "Type" : "AWS::CodeDeploy::Application",
+      "Properties" : {
+        "ApplicationName" : {
+          "Ref": "ApplicationName"
+        }
+      }
+    },
+    "InstanceRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "ec2.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Path": "/"
+      }
+    },
+    "InstanceRolePolicies": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "InstanceRole",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "autoscaling:Describe*",
+                "autoscaling:EnterStandby",
+                "autoscaling:ExitStandby",
+                "autoscaling:UpdateAutoScalingGroup",
+                "cloudformation:Describe*",
+                "cloudformation:GetTemplate",
+                "cloudformation:ListStackResources",
+                "elasticache:DescribeCacheClusters",
+                "rds:DescribeDBInstances",
+                "s3:List*",
+                "s3:Get*",
+                "s3:Delete*",
+                "s3:CreateBucket",
+                "s3:PutObject"
+              ],
+              "Resource": "*"
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+                "logs:DescribeLogStreams"
+              ],
+              "Resource": [
+                "arn:aws:logs:*:*:*"
+              ]
+            }
+          ]
+        },
+        "Roles": [
+          {
+            "Ref": "InstanceRole"
+          }
+        ]
+      }
+    },
+    "InstanceSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : "Allow http to client host",
+        "VpcId" : {"Ref" : "VpcID"},
+        "SecurityGroupIngress" : [{
+          "IpProtocol" : "tcp",
+          "FromPort" : "80",
+          "ToPort" : "80",
+          "CidrIp" : "0.0.0.0/0"
+        },{
+          "IpProtocol" : "tcp",
+          "FromPort" : "22",
+          "ToPort" : "22",
+          "CidrIp" : "0.0.0.0/0"
+        }]
+      }
+    }
+  },
+  "Outputs": {
+    "InstanceRole": {
+      "Value": {
+        "Ref": "InstanceRole"
+      },
+      "Export": {
+        "Name": {
+          "Fn::Sub": "${AWS::StackName}:InstanceRole"
+        }
+      }
+    },
+    "CodeDeployApplication":{
+      "Value": {
+        "Ref": "CodeDeployApplication"
+      },
+      "Export": {
+        "Name": {
+          "Fn::Sub": "${AWS::StackName}:CodeDeployApplication"
+        }
+      }
+    },
+    "InstanceSecurityGroup": {
+      "Value": {
+        "Ref": "InstanceSecurityGroup"
+      },
+      "Export": {
+        "Name": {
+          "Fn::Sub": "${AWS::StackName}:InstanceSecurityGroup"
+        }
+      }
+    },
+    "StackName": {
+      "Value": {
+        "Ref": "AWS::StackName"
+      }
+    }
+  }
+}
+
