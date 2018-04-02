@@ -1,6 +1,8 @@
-package uk.co.springworks.aws.hellocloud;
+package hellocloud.pricer.config;
+
 
 import com.google.common.base.Predicates;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -14,18 +16,15 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.time.LocalDate;
 
-/**
- * Created by pkuzan on 28/11/2016.
- */
-@Component
 @EnableSwagger2
+@Component
 public class SwaggerConfig {
+    private static String API_NAME = "Pricer";
+    private static String API_DESCRIPTION = "One-stop-shop for all you stock prices!";
+    private static String API_VERSION = "1.0";
 
-    public static final String VERSION = "1.0";
-    public static final String TITLE = "Pricer";
-    public static final String DESCRIPTION = "One-stop Stock Pricing Shop!";
-
-    public Docket api(){
+    @Bean
+    public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2).select()
                 .apis(RequestHandlerSelectors.any())
                 .apis(Predicates.not(RequestHandlerSelectors.basePackage("org.springframework.boot")))
@@ -35,16 +34,15 @@ public class SwaggerConfig {
                 .apiInfo(metadata())
                 .directModelSubstitute(LocalDate.class, String.class)
                 .genericModelSubstitutes(ResponseEntity.class)
-                .tags(new Tag(TITLE, DESCRIPTION));
+                .tags(new Tag(API_NAME, API_DESCRIPTION));
 
     }
 
-    private ApiInfo metadata(){
+    private ApiInfo metadata() {
         return new ApiInfoBuilder()
-                .title(TITLE)
-                .description(DESCRIPTION)
-                .version(VERSION)
+                .title(API_NAME)
+                .description(API_DESCRIPTION)
+                .version(API_VERSION)
                 .build();
     }
-
 }
