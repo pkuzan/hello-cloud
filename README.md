@@ -1,12 +1,11 @@
 # Hello Cloud
-An AWS experiment.
+An Azure experiment.
 
-This project will form the basis of our of Amazon AWS reference implementations.
+This project will form the basis of our of Azure reference implementations.
 
-A bootstrap class DefaultPricerApplication is provided for running in your IDE. However, this 
-project does not include the Spring Boot Maven plugin so can't directly be deployed to Beanstalk for example.
-This project builds to a normal Java JAR so other projects can depend on it.
+HelloCloud uses an H2 database with Spring Data JPA for persistence. This will be replaced with SQL Server.
+Currently there is only a Swagger UI.
 
-In order to deploy to beanstalk, you need to perform a mvn install on this project, and then use 
-another dependant project, such as S3PricerRepositroy, these projects will build to a single 
-executable JAR file including full transitive closure.
+Terraform will be used to provision Azure resources
+
+
