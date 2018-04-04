@@ -38,10 +38,6 @@ variable "subnet1_cidr" {
   description = "CIDR block for Subnet within a Virtual Network"
 }
 
-variable "subnet2_cidr" {
-  description = "CIDR block for Subnet within a Virtual Network"
-}
-
 variable "vm_username" {
   description = "Enter admin username to SSH into Linux VM"
 }

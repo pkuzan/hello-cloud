@@ -1,6 +1,6 @@
 resource "azurerm_resource_group" "resourcegroup" {
-  name = "helloCloudResourceGroup"
-  location = "eastus"
+  name = "${var.resource_group_name}"
+  location = "${var.location}"
 
   tags {
     environment = "Hello Cloud"
@@ -10,8 +10,8 @@ resource "azurerm_resource_group" "resourcegroup" {
 resource "azurerm_virtual_network" "vnet" {
   name = "helloCloudVnet"
   address_space = [
-    "10.0.0.0/16"]
-  location = "eastus"
+    "${var.vnet_cidr}"]
+  location = "${var.location}"
   resource_group_name = "${azurerm_resource_group.resourcegroup.name}"
 
   tags {
@@ -23,12 +23,12 @@ resource "azurerm_subnet" "subnet" {
   name = "helloCloudSubnet"
   resource_group_name = "${azurerm_resource_group.resourcegroup.name}"
   virtual_network_name = "${azurerm_virtual_network.vnet.name}"
-  address_prefix = "10.0.2.0/24"
+  address_prefix = "${var.subnet1_cidr}"
 }
 
 resource "azurerm_public_ip" "publicip" {
   name = "helloCloudPublicIP"
-  location = "eastus"
+  location = "${var.location}"
   resource_group_name = "${azurerm_resource_group.resourcegroup.name}"
   public_ip_address_allocation = "dynamic"
 
@@ -39,7 +39,7 @@ resource "azurerm_public_ip" "publicip" {
 
 resource "azurerm_network_security_group" "nsg" {
   name = "helloCloudNetworkSecurityGroup"
-  location = "eastus"
+  location = "${var.location}"
   resource_group_name = "${azurerm_resource_group.resourcegroup.name}"
 
   security_rule {
@@ -61,7 +61,7 @@ resource "azurerm_network_security_group" "nsg" {
 
 resource "azurerm_network_interface" "nic" {
   name = "helloCloudNIC"
-  location = "eastus"
+  location = "${var.location}"
   resource_group_name = "${azurerm_resource_group.resourcegroup.name}"
 
   ip_configuration {
@@ -90,7 +90,7 @@ resource "random_id" "randomId" {
 resource "azurerm_storage_account" "storageaccount" {
   name = "diag${random_id.randomId.hex}"
   resource_group_name = "${azurerm_resource_group.resourcegroup.name}"
-  location = "eastus"
+  location = "${var.location}"
   account_tier = "Standard"
   account_replication_type = "LRS"
 
@@ -102,8 +102,8 @@ resource "azurerm_storage_account" "storageaccount" {
 # Create virtual machine
 resource "azurerm_virtual_machine" "myterraformvm" {
   name = "helloCloudVM"
-  location = "eastus"
-  resource_group_name = "${aazurerm_resource_group.resourcegroup.name}"
+  location = "${var.location}"
+  resource_group_name = "${azurerm_resource_group.resourcegroup.name}"
   network_interface_ids = [
     "${azurerm_network_interface.nic.id}"]
   vm_size = "Standard_DS1_v2"
@@ -131,7 +131,7 @@ resource "azurerm_virtual_machine" "myterraformvm" {
     disable_password_authentication = true
     ssh_keys {
       path = "/home/azureuser/.ssh/authorized_keys"
-      key_data = "ssh-rsa AAAAB3Nz{snip}hwhqT9h"
+      key_data = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDbCKBKF/sD2Lbm+OIAf9iiOhIdNhrzBHiUXOHTWdXakFBrAwE8rec93er+hwK2ZDoCJMabtKh5eUz3+Bg277RPLu0V6sRWfc1Ziv2BJBcLs6Gx2li50h6IQq7qyXNFw7NUcloh45sYpZnz9TwGH0her2LUy5PvkvjQlVeJeSxBBr7kihXheYpbAYYxD/Iu3pzjb34bIREK33WzLxix43bIIiyADhVg+gSZIdhBUqbFwnSdTlYV/pqsJJSfSPbOvQWbEgrj/6NSbFWXLPj5L57FD1o2xHfuHy0/3Ue0/gsM+6SdmvpRZgbXmhUAPhLpqzag113o2kzbFkfeLIpUdQ+R"
     }
   }
 
