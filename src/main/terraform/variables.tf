@@ -45,3 +45,11 @@ variable "vm_username" {
 variable "vm_password" {
   description = "Enter admin password to SSH into VM"
 }
+
+variable "environment" {
+  description = "Enter an environment e.g. DEV, UAT, PROD"
+}
+
+variable "ssh_key_data" {
+  description = "Enter a key-pair public key"
+}

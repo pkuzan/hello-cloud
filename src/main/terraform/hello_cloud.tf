@@ -3,7 +3,7 @@ resource "azurerm_resource_group" "resourcegroup" {
   location = "${var.location}"
 
   tags {
-    environment = "Hello Cloud"
+    environment = "${var.environment}"
   }
 }
 
@@ -15,7 +15,7 @@ resource "azurerm_virtual_network" "vnet" {
   resource_group_name = "${azurerm_resource_group.resourcegroup.name}"
 
   tags {
-    environment = "Hello Cloud"
+    environment = "${var.environment}"
   }
 }
 
@@ -33,7 +33,7 @@ resource "azurerm_public_ip" "publicip" {
   public_ip_address_allocation = "dynamic"
 
   tags {
-    environment = "Hello Cloud"
+    environment = "${var.environment}"
   }
 }
 
@@ -55,7 +55,7 @@ resource "azurerm_network_security_group" "nsg" {
   }
 
   tags {
-    environment = "Hello Cloud"
+    environment = "${var.environment}"
   }
 }
 
@@ -72,7 +72,7 @@ resource "azurerm_network_interface" "nic" {
   }
 
   tags {
-    environment = "Hello Cloud"
+    environment = "${var.environment}"
   }
 }
 
@@ -95,12 +95,12 @@ resource "azurerm_storage_account" "storageaccount" {
   account_replication_type = "LRS"
 
   tags {
-    environment = "Hello Cloud"
+    environment = "${var.environment}"
   }
 }
 
 # Create virtual machine
-resource "azurerm_virtual_machine" "myterraformvm" {
+resource "azurerm_virtual_machine" "virtual_machine" {
   name = "helloCloudVM"
   location = "${var.location}"
   resource_group_name = "${azurerm_resource_group.resourcegroup.name}"
@@ -131,7 +131,7 @@ resource "azurerm_virtual_machine" "myterraformvm" {
     disable_password_authentication = true
     ssh_keys {
       path = "/home/azureuser/.ssh/authorized_keys"
-      key_data = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDbCKBKF/sD2Lbm+OIAf9iiOhIdNhrzBHiUXOHTWdXakFBrAwE8rec93er+hwK2ZDoCJMabtKh5eUz3+Bg277RPLu0V6sRWfc1Ziv2BJBcLs6Gx2li50h6IQq7qyXNFw7NUcloh45sYpZnz9TwGH0her2LUy5PvkvjQlVeJeSxBBr7kihXheYpbAYYxD/Iu3pzjb34bIREK33WzLxix43bIIiyADhVg+gSZIdhBUqbFwnSdTlYV/pqsJJSfSPbOvQWbEgrj/6NSbFWXLPj5L57FD1o2xHfuHy0/3Ue0/gsM+6SdmvpRZgbXmhUAPhLpqzag113o2kzbFkfeLIpUdQ+R"
+      key_data = "${var.ssh_key_data}"
     }
   }
 
@@ -141,6 +141,22 @@ resource "azurerm_virtual_machine" "myterraformvm" {
   }
 
   tags {
-    environment = "Hello Cloud"
+    environment = "${var.environment}"
   }
+}
+
+resource "azurerm_virtual_machine_extension" "virtual_machine_extension" {
+  name = "msiExtension"
+  location = "${var.location}"
+  resource_group_name = "${azurerm_resource_group.resourcegroup.name}"
+  virtual_machine_name = "${azurerm_virtual_machine.virtual_machine.name}"
+  publisher = "Microsoft.ManagedIdentity"
+  type = "ManagedIdentityExtensionForLinux"
+  type_handler_version = "1.0"
+
+  settings = <<SETTINGS
+    {
+        "port": 50342
+    }
+  SETTINGS
 }
