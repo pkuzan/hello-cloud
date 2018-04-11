@@ -44,12 +44,24 @@ resource "azurerm_network_security_group" "nsg" {
 
   security_rule {
     name = "SSH"
-    priority = 1001
+    priority = 1002
     direction = "Inbound"
     access = "Allow"
     protocol = "Tcp"
     source_port_range = "*"
     destination_port_range = "22"
+    source_address_prefix = "*"
+    destination_address_prefix = "*"
+  }
+
+  security_rule {
+    name = "HTTP"
+    priority = 1001
+    direction = "Inbound"
+    access = "Allow"
+    protocol = "Tcp"
+    source_port_range = "*"
+    destination_port_range = "8080"
     source_address_prefix = "*"
     destination_address_prefix = "*"
   }
@@ -86,7 +98,6 @@ resource "random_id" "randomId" {
   byte_length = 8
 }
 
-# Create storage account for boot diagnostics
 resource "azurerm_storage_account" "storageaccount" {
   name = "diag${random_id.randomId.hex}"
   resource_group_name = "${azurerm_resource_group.resourcegroup.name}"
@@ -116,9 +127,9 @@ resource "azurerm_virtual_machine" "virtual_machine" {
   }
 
   storage_image_reference {
-    publisher = "Canonical"
-    offer = "UbuntuServer"
-    sku = "16.04.0-LTS"
+    publisher = "RedHat"
+    offer = "RHEL"
+    sku = "7.3"
     version = "latest"
   }
 
@@ -159,4 +170,21 @@ resource "azurerm_virtual_machine_extension" "virtual_machine_extension" {
         "port": 50342
     }
   SETTINGS
+}
+
+resource "azurerm_storage_container" "storageContainer" {
+  name = "hello-cloud-storage-container"
+  resource_group_name = "${azurerm_resource_group.resourcegroup.name}"
+  storage_account_name = "${azurerm_storage_account.storageaccount.name}"
+  container_access_type = "private"
+}
+
+resource "azurerm_storage_blob" "application_blob" {
+  name = "helloCloudAppBlob"
+  resource_group_name = "${azurerm_resource_group.resourcegroup.name}"
+  storage_account_name = "${azurerm_storage_account.storageaccount.name}"
+  storage_container_name = "${azurerm_storage_container.storageContainer.name}"
+
+  type = "page"
+  size = 5120
 }
