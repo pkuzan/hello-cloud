@@ -53,3 +53,7 @@ variable "environment" {
 variable "ssh_key_data" {
   description = "Enter a key-pair public key"
 }
+
+variable "storage_account_name" {
+  description = "Enter a storage account name"
+}
