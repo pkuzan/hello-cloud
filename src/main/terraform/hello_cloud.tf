@@ -24,6 +24,7 @@ resource "azurerm_subnet" "subnet" {
   resource_group_name = "${azurerm_resource_group.resourcegroup.name}"
   virtual_network_name = "${azurerm_virtual_network.vnet.name}"
   address_prefix = "${var.subnet1_cidr}"
+  network_security_group_id = "${azurerm_network_security_group.nsg.id}"
 }
 
 resource "azurerm_public_ip" "publicip" {
@@ -61,7 +62,7 @@ resource "azurerm_network_security_group" "nsg" {
     access = "Allow"
     protocol = "Tcp"
     source_port_range = "*"
-    destination_port_range = "8080"
+    destination_port_range = "80"
     source_address_prefix = "*"
     destination_address_prefix = "*"
   }
@@ -88,27 +89,7 @@ resource "azurerm_network_interface" "nic" {
   }
 }
 
-# Generate random text for a unique storage account name
-resource "random_id" "randomId" {
-  keepers = {
-    # Generate a new ID only when a new resource group is defined
-    resource_group = "${azurerm_resource_group.resourcegroup.name}"
-  }
 
-  byte_length = 8
-}
-
-resource "azurerm_storage_account" "storageaccount" {
-  name = "diag${random_id.randomId.hex}"
-  resource_group_name = "${azurerm_resource_group.resourcegroup.name}"
-  location = "${var.location}"
-  account_tier = "Standard"
-  account_replication_type = "LRS"
-
-  tags {
-    environment = "${var.environment}"
-  }
-}
 
 # Create virtual machine
 resource "azurerm_virtual_machine" "virtual_machine" {
@@ -118,6 +99,7 @@ resource "azurerm_virtual_machine" "virtual_machine" {
   network_interface_ids = [
     "${azurerm_network_interface.nic.id}"]
   vm_size = "Standard_DS1_v2"
+  delete_os_disk_on_termination = true
 
   storage_os_disk {
     name = "myOsDisk"
@@ -156,35 +138,6 @@ resource "azurerm_virtual_machine" "virtual_machine" {
   }
 }
 
-resource "azurerm_virtual_machine_extension" "virtual_machine_extension" {
-  name = "msiExtension"
-  location = "${var.location}"
-  resource_group_name = "${azurerm_resource_group.resourcegroup.name}"
-  virtual_machine_name = "${azurerm_virtual_machine.virtual_machine.name}"
-  publisher = "Microsoft.ManagedIdentity"
-  type = "ManagedIdentityExtensionForLinux"
-  type_handler_version = "1.0"
 
-  settings = <<SETTINGS
-    {
-        "port": 50342
-    }
-  SETTINGS
-}
 
-resource "azurerm_storage_container" "storageContainer" {
-  name = "hello-cloud-storage-container"
-  resource_group_name = "${azurerm_resource_group.resourcegroup.name}"
-  storage_account_name = "${azurerm_storage_account.storageaccount.name}"
-  container_access_type = "private"
-}
 
-resource "azurerm_storage_blob" "application_blob" {
-  name = "helloCloudAppBlob"
-  resource_group_name = "${azurerm_resource_group.resourcegroup.name}"
-  storage_account_name = "${azurerm_storage_account.storageaccount.name}"
-  storage_container_name = "${azurerm_storage_container.storageContainer.name}"
-
-  type = "page"
-  size = 5120
-}
