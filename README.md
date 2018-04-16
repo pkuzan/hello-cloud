@@ -8,9 +8,11 @@ Currently there is only a Swagger UI.
 
 Terraform will be used to provision Azure resources.
 
-Secrets ned to be in a separate secret.tfvars file.
+Secrets need to be in a separate secret.tfvars file.
 
 ```
+subscription_id = "XXX"
+tenant_id = "XXX"
 client_id = "XXX"
 client_secret = "XXX"
 ssh_key_data = "ssh-rsa XXX"
