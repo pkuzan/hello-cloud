@@ -5,4 +5,6 @@
 /.idea/
 /*.iml
 /**/.terraform/
-src/main/terraform/secret.tfvars
+/**/*.tfstate
+/**/*.tfstate.backup
+/**/secret.tfvars
