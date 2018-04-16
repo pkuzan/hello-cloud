@@ -89,8 +89,6 @@ resource "azurerm_network_interface" "nic" {
   }
 }
 
-
-
 # Create virtual machine
 resource "azurerm_virtual_machine" "virtual_machine" {
   name = "helloCloudVM"
@@ -118,6 +116,14 @@ resource "azurerm_virtual_machine" "virtual_machine" {
   os_profile {
     computer_name = "myvm"
     admin_username = "azureuser"
+    custom_data = <<EOF
+#!/bin/bash
+sudo sh -c 'echo -e "[azure-cli]\nname=Azure CLI\nbaseurl=https://packages.microsoft.com/yumrepos/azure-cli\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/azure-cli.repo'
+sudo yum -y install azure-cli
+sudo yum -y install java-1.8.0-openjdk
+sudo firewall-cmd --zone=public --add-port=80/tcp --permanent
+sudo firewall-cmd --reload
+EOF
   }
 
   os_profile_linux_config {

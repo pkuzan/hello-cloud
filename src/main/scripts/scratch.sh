@@ -32,12 +32,12 @@ az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/a7e7a5e8-
 az login --service-principal -u http://azure-cli-2018-04-04-08-18-49 -p 12a3469c-2f5e-44c1-8d9c-27a317b9e45d --tenant f5af8153-415e-41d1-be4d-b2113b1bf62d
 az vm list-sizes --location westus
 
-ssh -i ~/.ssh/azure azureuser@52.234.230.55
+ssh -i ~/.ssh/azure azureuser@40.121.205.115
 
 Install CLI
-sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc \
-sudo sh -c 'echo -e "[azure-cli]\nname=Azure CLI\nbaseurl=https://packages.microsoft.com/yumrepos/azure-cli\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/azure-cli.repo' \
-sudo yum -y install azure-cli \
+sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+sudo sh -c 'echo -e "[azure-cli]\nname=Azure CLI\nbaseurl=https://packages.microsoft.com/yumrepos/azure-cli\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/azure-cli.repo'
+sudo yum -y install azure-cli
 sudo yum -y install java-1.8.0-openjdk
 sudo firewall-cmd --zone=public --add-port=80/tcp --permanent
 sudo firewall-cmd --reload
@@ -60,8 +60,16 @@ az storage blob upload \
     --container-name hello-cloud-storage-container \
     --name hello-cloud-bin \
     --account-name azurehellocloud007 \
-    --account-key IbSAvXfcUYZT0B08jvOtS3GxKTUoGqGPBS13LpwXUA5QiligGxumrBgsOc1xiCL3qz3tylL7cPL9MxAVi/yiNg== \
+    --account-key AX84imGQ0hYbbZER0z6PuzKqpAj06P/PYiGkwpxbnLmrjDBA47MSp/9V7Ni+y0a8wI8rKH7nuS9wdLWOYEDQAA== \
     --file /Users/pkuzan/dev/azure/hello-cloud/target/pricer-core-0.0.3-SNAPSHOT.jar
+
+az storage blob upload \
+    --container-name hello-cloud-storage-container \
+    --name start_server.sh \
+    --account-name azurehellocloud007 \
+    --account-key AX84imGQ0hYbbZER0z6PuzKqpAj06P/PYiGkwpxbnLmrjDBA47MSp/9V7Ni+y0a8wI8rKH7nuS9wdLWOYEDQAA== \
+    --file /Users/pkuzan/dev/azure/hello-cloud/src/main/scripts/start_server.sh
+
 
 az storage blob list \
     --container-name hello-cloud-storage-container \
@@ -73,7 +81,14 @@ az storage blob download \
     --container-name hello-cloud-storage-container \
     --name hello-cloud-bin \
     --account-name azurehellocloud007 \
-    --account-key IbSAvXfcUYZT0B08jvOtS3GxKTUoGqGPBS13LpwXUA5QiligGxumrBgsOc1xiCL3qz3tylL7cPL9MxAVi/yiNg== \
+    --account-key AX84imGQ0hYbbZER0z6PuzKqpAj06P/PYiGkwpxbnLmrjDBA47MSp/9V7Ni+y0a8wI8rKH7nuS9wdLWOYEDQAA== \
     --file ~/hellocloud/pricer-core.jar
+
+az storage blob download \
+    --container-name hello-cloud-storage-container \
+    --name start_server.sh \
+    --account-name azurehellocloud007 \
+    --account-key AX84imGQ0hYbbZER0z6PuzKqpAj06P/PYiGkwpxbnLmrjDBA47MSp/9V7Ni+y0a8wI8rKH7nuS9wdLWOYEDQAA== \
+    --file ~/hellocloud/start_server.sh
 
 az vm open-port --port 8080 --resource-group HelloCloud --name helloCloudVM
