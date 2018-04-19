@@ -32,7 +32,7 @@ az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/a7e7a5e8-
 az login --service-principal -u http://azure-cli-2018-04-04-08-18-49 -p 12a3469c-2f5e-44c1-8d9c-27a317b9e45d --tenant f5af8153-415e-41d1-be4d-b2113b1bf62d
 az vm list-sizes --location westus
 
-ssh -i ~/.ssh/azure azureuser@40.121.205.115
+ssh -i ~/.ssh/azure azureuser@52.191.11.126
 
 Install CLI
 sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
@@ -60,7 +60,7 @@ az storage blob upload \
     --container-name hello-cloud-storage-container \
     --name hello-cloud-bin \
     --account-name azurehellocloud007 \
-    --account-key AX84imGQ0hYbbZER0z6PuzKqpAj06P/PYiGkwpxbnLmrjDBA47MSp/9V7Ni+y0a8wI8rKH7nuS9wdLWOYEDQAA== \
+    --account-key 4O9EgbWqkj01GiTgpWQNsAGmUPLHAQuDDbNQ6cf+7kmK+Z3fNwnLDYiSWqb+TLz9jIEGk4Yug+U9FOhvWyRL4g== \
     --file /Users/pkuzan/dev/azure/hello-cloud/target/pricer-core-0.0.3-SNAPSHOT.jar
 
 az storage blob upload \
@@ -78,11 +78,11 @@ az storage blob list \
  	--output table
 
 az storage blob download \
-    --container-name hello-cloud-storage-container \
-    --name hello-cloud-bin \
-    --account-name azurehellocloud007 \
-    --account-key AX84imGQ0hYbbZER0z6PuzKqpAj06P/PYiGkwpxbnLmrjDBA47MSp/9V7Ni+y0a8wI8rKH7nuS9wdLWOYEDQAA== \
-    --file ~/hellocloud/pricer-core.jar
+                                           --container-name hello-cloud-storage-container \
+                                           --name hello-cloud-bin \
+                                           --account-name azurehellocloud007 \
+                                           --account-key 4O9EgbWqkj01GiTgpWQNsAGmUPLHAQuDDbNQ6cf+7kmK+Z3fNwnLDYiSWqb+TLz9jIEGk4Yug+U9FOhvWyRL4g== \
+                                           --file ~/hellocloud/pricer-core.jar
 
 az storage blob download \
     --container-name hello-cloud-storage-container \
@@ -91,4 +91,3 @@ az storage blob download \
     --account-key AX84imGQ0hYbbZER0z6PuzKqpAj06P/PYiGkwpxbnLmrjDBA47MSp/9V7Ni+y0a8wI8rKH7nuS9wdLWOYEDQAA== \
     --file ~/hellocloud/start_server.sh
 
-az vm open-port --port 8080 --resource-group HelloCloud --name helloCloudVM
