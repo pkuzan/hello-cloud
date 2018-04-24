@@ -91,3 +91,54 @@ az storage blob download \
     --account-key AX84imGQ0hYbbZER0z6PuzKqpAj06P/PYiGkwpxbnLmrjDBA47MSp/9V7Ni+y0a8wI8rKH7nuS9wdLWOYEDQAA== \
     --file ~/hellocloud/start_server.sh
 
+az ad sp create-for-rbac --name "hello-cloud" --password "myPassword14+"
+{
+  "appId": "74af903f-7c3a-4186-917e-c7c1ebac3f9f",
+  "displayName": "hello-cloud",
+  "name": "http://hello-cloud",
+  "password": "myPassword14+",
+  "tenant": "f5af8153-415e-41d1-be4d-b2113b1bf62d"
+}
+<servers>
+   <server>
+     <id>azure-auth</id>
+      <configuration>
+         <client>74af903f-7c3a-4186-917e-c7c1ebac3f9f</client>
+         <tenant>f5af8153-415e-41d1-be4d-b2113b1bf62d</tenant>
+         <key>myPassword14+</key>
+         <environment>AZURE</environment>
+      </configuration>
+   </server>
+</servers>
+
+az acr create --admin-enabled --resource-group HelloCloud --location westus --name hellocloudregistry --sku Basic
+
+  "adminUserEnabled": true,
+  "creationDate": "2018-04-23T10:38:23.382608+00:00",
+  "id": "/subscriptions/a7e7a5e8-958c-46b5-aced-3ce0d5b6f502/resourceGroups/HelloCloud/providers/Microsoft.ContainerRegistry/registries/hellocloudregistry",
+  "location": "westus",
+  "loginServer": "hellocloudregistry.azurecr.io",
+  "name": "hellocloudregistry",
+  "provisioningState": "Succeeded",
+  "resourceGroup": "HelloCloud",
+  "sku": {
+    "name": "Basic",
+    "tier": "Basic"
+  },
+  "status": null,
+  "storageAccount": null,
+  "tags": {},
+  "type": "Microsoft.ContainerRegistry/registries"
+}
+az acr credential show --name hellocloudregistry --query passwords[0]
+{
+  "name": "password",
+  "value": "nSy+3JYTW0Zyg32TKZa/KUfJnIrDmsG/"
+}
+<servers>
+   <server>
+      <id>hellocloudregistry</id>
+      <username>hellocloudregistry</username>
+      <password>nSy+3JYTW0Zyg32TKZa/KUfJnIrDmsG/</password>
+   </server>
+</servers>
