@@ -72,7 +72,11 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>com.microsoft.azure</groupId>
+            <artifactId>applicationinsights-logging-logback</artifactId>
+            <version>[2.0,)</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
@@ -118,17 +122,15 @@
                         <serverId>azure-auth</serverId>
                     </authentication>
                     <resourceGroup>HelloCloud</resourceGroup>
-                    <appName>hello-cloud</appName>
+                    <appName>hello-cloud-007</appName>
                     <region>westus</region>
                     <containerSettings>
-                        <!--imageName>${docker.image.prefix}/${project.artifactId}</imageName-->
-
-                        <imageName>springio/gs-spring-boot-docker:latest</imageName>
+                        <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
                     </containerSettings>
                     <appSettings>
                         <property>
                             <name>PORT</name>
-                            <value>80</value>
+                            <value>8080</value>
                         </property>
                     </appSettings>
                 </configuration>

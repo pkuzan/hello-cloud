@@ -116,9 +116,6 @@ resource "azurerm_virtual_machine" "virtual_machine" {
   os_profile {
     computer_name = "myvm"
     admin_username = "azureuser"
-    custom_data = "${base64encode( file("
-    vm-install.sh
-  "))}"
   }
 
   os_profile_linux_config {
