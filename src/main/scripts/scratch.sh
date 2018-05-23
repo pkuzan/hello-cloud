@@ -1,6 +1,29 @@
 #!/bin/bash
 # Just a command scratch pad.
 
+
+//Sandbox
+{
+  "subscriptionId": "97cb539a-2f7f-42c7-b421-8343c7e9e73e",
+  "tenantId": "14befade-1412-4362-bf99-0e0269eaaf72"
+}
+az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/97cb539a-2f7f-42c7-b421-8343c7e9e73e"
+
+{
+  "appId": "8afcbef5-9fd2-4087-a8d4-a336513719cc",
+  "displayName": "azure-cli-2018-05-17-13-09-18",
+  "name": "http://azure-cli-2018-05-17-13-09-18",
+  "password": "df2c986c-beef-40c4-94af-3edcb14c23d8",
+  "tenant": "14befade-1412-4362-bf99-0e0269eaaf72"
+}
+
+
+//Sandbox
+
+hello-cloud-ftp-user
+MyPassword14+
+
+https://www.terraform.io/docs/providers/azurerm/authenticating_via_service_principal.html
 https://linuxacademy.com/howtoguides/posts/show/topic/20146-a-complete-azure-environment-with-terraform
 
 [
@@ -18,6 +41,10 @@ https://linuxacademy.com/howtoguides/posts/show/topic/20146-a-complete-azure-env
   }
 ]
 
+az account set --subscription="97cb539a-2f7f-42c7-b421-8343c7e9e73e"
+
+az login --service-principal -u d3d2e34f-6f46-4f2c-afe8-947b683c3eb3 -p ZBPQ6YJlssygt2iyxBYpdq65BlL0nSwvLm2Bic6M0eA= --tenant 14befade-1412-4362-bf99-0e0269eaaf72 --allow-no-subscriptions
+
 https://docs.microsoft.com/en-us/azure/virtual-machines/linux/terraform-install-configure
 
 az account show --query "{subscriptionId:id, tenantId:tenantId}"
@@ -32,7 +59,7 @@ az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/a7e7a5e8-
 az login --service-principal -u http://azure-cli-2018-04-04-08-18-49 -p 12a3469c-2f5e-44c1-8d9c-27a317b9e45d --tenant f5af8153-415e-41d1-be4d-b2113b1bf62d
 az vm list-sizes --location westus
 
-ssh -i ~/.ssh/azure azureuser@52.191.11.126
+ssh -i ~/.ssh/azure azureuser@40.114.74.236
 
 Install CLI
 sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc

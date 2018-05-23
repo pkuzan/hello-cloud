@@ -25,10 +25,7 @@ resource "azurerm_virtual_machine_extension" "custom_script_extension" {
 
   settings = <<SETTINGS
   {
-  "fileUris": [
-     "https://gist.github.com/pkuzan/a8fbc202af4a365f94d541bfc3676221/raw/vm-config.sh"
-  ],
-  "commandToExecute": "sh vm-config.sh"
+  "commandToExecute": "sh /opt/webapp/start_server.sh"
   }
 SETTINGS
 

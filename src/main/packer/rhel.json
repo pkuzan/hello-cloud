@@ -1,0 +1,55 @@
+{
+  "variables": {
+    "client_id": "",
+    "client_secret": ""
+  },
+  "builders": [
+    {
+      "type": "azure-arm",
+      "client_id": "{{user `client_id`}}",
+      "client_secret": "{{user `client_secret`}}",
+      "tenant_id": "14befade-1412-4362-bf99-0e0269eaaf72",
+      "subscription_id": "97cb539a-2f7f-42c7-b421-8343c7e9e73e",
+      "managed_image_resource_group_name": "HelloCloud",
+      "managed_image_name": "helloCloudImage5",
+      "os_type": "Linux",
+      "image_publisher": "RedHat",
+      "image_offer": "RHEL",
+      "image_sku": "7.3",
+      "image_version": "latest",
+      "ssh_pty": "true",
+      "ssh_username": "azureuser",
+      "ssh_password": "password",
+      "azure_tags": {
+        "dept": "HelloCloud",
+        "task": "Image deployment"
+      },
+      "location": "East US",
+      "vm_size": "Standard_DS2_v2"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "file",
+      "source": "./bin/",
+      "destination": "/tmp"
+    },
+    {
+      "execute_command": "echo '{{user `ssh_pass`}}' | {{ .Vars }} sudo -S -E sh '{{ .Path }}'",
+      "inline": [
+        "mkdir -p /opt/webapp",
+        "mv /tmp/start_server.sh /opt/webapp",
+        "mv /tmp/pricer-core-0.0.3-SNAPSHOT.jar /opt/webapp/app.jar",
+        "chmod +x /opt/webapp/start_server.sh",
+        "yum upgrade -y",
+        "yum -y install java-1.8.0-openjdk",
+        "firewall-cmd --zone=public --add-port=80/tcp --permanent",
+        "firewall-cmd --reload",
+        "/usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync"
+      ],
+      "inline_shebang": "/bin/sh -x",
+      "type": "shell",
+      "skip_clean": true
+    }
+  ]
+}

@@ -107,10 +107,7 @@ resource "azurerm_virtual_machine" "virtual_machine" {
   }
 
   storage_image_reference {
-    publisher = "RedHat"
-    offer = "RHEL"
-    sku = "7.3"
-    version = "latest"
+    id = "/subscriptions/97cb539a-2f7f-42c7-b421-8343c7e9e73e/resourceGroups/HelloCloud/providers/Microsoft.Compute/images/helloCloudImage4"
   }
 
   os_profile {
