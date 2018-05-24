@@ -49,17 +49,17 @@ Azure CLI will respond:
 In your Maven settings.xml add the following, replacing the placeholders with your values.:
 
 ```
-&lt;servers&gt;
-   &lt;server&gt;
-     &lt;id&gt;azure-auth&lt;/id&gt;
-      &lt;configuration&gt;
-         &lt;client&gt;CLIENT-ID&lt;/client&gt;
-         &lt;tenant&gt;TENNANT-ID&lt;/tenant&gt;
-         &lt;key&gt;PASSWORD&lt;/key&gt;
-         &lt;environment&gt;AZURE&lt;/environment&gt;
-      &lt;/configuration&gt;
-   &lt;/server&gt;
-&lt;/servers&gt;
+<servers>
+   <server>
+     <id>azure-auth</id>
+      <configuration>
+         <client>CLIENT-ID</client>
+         <tenant>TENNANT-ID</tenant>
+         <key>PASSWORD</key>
+         <environment>AZURE</environment>
+      </configuration>
+   </server>
+</servers>
 ```
 
 You can then run the dockerfile:build to build an image and dockerfile:push to push the image to ACR.
