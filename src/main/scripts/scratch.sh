@@ -59,7 +59,7 @@ az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/a7e7a5e8-
 az login --service-principal -u http://azure-cli-2018-04-04-08-18-49 -p 12a3469c-2f5e-44c1-8d9c-27a317b9e45d --tenant f5af8153-415e-41d1-be4d-b2113b1bf62d
 az vm list-sizes --location westus
 
-ssh -i ~/.ssh/azure azureuser@40.114.74.236
+ssh -i ~/.ssh/azure azureuser@168.62.62.91
 
 Install CLI
 sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc

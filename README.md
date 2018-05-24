@@ -64,3 +64,34 @@ In your Maven settings.xml add the following, replacing the placeholders with yo
 
 You can then run the dockerfile:build to build an image and dockerfile:push to push the image to ACR.
 Then run azure-webapp:deploy to deploy to App Service.
+
+## Packer
+A Packer build file is also included.
+To use, the Packer executable needs to be installed from https://www.packer.io/
+
+Variables will need to be passed to Packer to run the script. Best thing to do is to create a script.
+SSH password can be anything.
+
+```
+#!/usr/bin/env bash
+packer build \
+    -var 'client_id=YOUR_CLIENT_ID' \
+    -var 'client_secret=YOUR_CLENT_SECRET' \
+    -var 'tenant_id=YOUR_TENNANT_ID' \
+    -var 'subscription_id=YOUR_SUBSCRIPTION_ID' \
+    -var 'ssh_password=YOUR_SSH_PASSWORD' \
+    -var 'managed_image_name=helloCloudImage6' \
+    -var 'app_binary_name=pricer-core-0.0.3-SNAPSHOT.jar' \
+rhel.json
+```
+
+Ensure your application binary is in /packer/bin (copy is from target).
+
+Then mofify your Terraform script to use the image.
+
+```
+ storage_image_reference {
+    id = "/subscriptions/YOUR_SUBSCRIPTION_ID/resourceGroups/HelloCloud/providers/Microsoft.Compute/images/helloCloudImage6"
+  }
+```
+

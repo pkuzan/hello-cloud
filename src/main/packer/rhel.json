@@ -1,17 +1,22 @@
 {
   "variables": {
+    "tenant_id": "",
+    "subscription_id": "",
     "client_id": "",
-    "client_secret": ""
+    "client_secret": "",
+    "ssh_password": "",
+    "managed_image_name": "",
+    "app_binary_name": ""
   },
   "builders": [
     {
       "type": "azure-arm",
       "client_id": "{{user `client_id`}}",
       "client_secret": "{{user `client_secret`}}",
-      "tenant_id": "14befade-1412-4362-bf99-0e0269eaaf72",
-      "subscription_id": "97cb539a-2f7f-42c7-b421-8343c7e9e73e",
+      "tenant_id": "{{user `tenant_id`}}",
+      "subscription_id": "{{user `subscription_id`}}",
       "managed_image_resource_group_name": "HelloCloud",
-      "managed_image_name": "helloCloudImage5",
+      "managed_image_name": "{{user `managed_image_name`}}",
       "os_type": "Linux",
       "image_publisher": "RedHat",
       "image_offer": "RHEL",
@@ -19,7 +24,7 @@
       "image_version": "latest",
       "ssh_pty": "true",
       "ssh_username": "azureuser",
-      "ssh_password": "password",
+      "ssh_password": "{{user `ssh_password`}}",
       "azure_tags": {
         "dept": "HelloCloud",
         "task": "Image deployment"
@@ -39,7 +44,7 @@
       "inline": [
         "mkdir -p /opt/webapp",
         "mv /tmp/start_server.sh /opt/webapp",
-        "mv /tmp/pricer-core-0.0.3-SNAPSHOT.jar /opt/webapp/app.jar",
+        "mv /tmp/{{user `app_binary_name`}} /opt/webapp/app.jar",
         "chmod +x /opt/webapp/start_server.sh",
         "yum upgrade -y",
         "yum -y install java-1.8.0-openjdk",
