@@ -1,74 +1,68 @@
-resource "azurerm_resource_group" "vmss" {
-  name = "${var.resource_group_name}"
-  location = "${var.location}"
-
-  tags {
-    environment = "helloCloud"
-  }
-}
-
-resource "azurerm_virtual_network" "vmss" {
-  name = "vmss-vnet"
+resource "azurerm_virtual_network" "vnet" {
+  name = "helloCloudVnet"
   address_space = [
-    "10.0.0.0/16"]
+    "${var.vnet_cidr}"]
   location = "${var.location}"
-  resource_group_name = "${azurerm_resource_group.vmss.name}"
+  resource_group_name = "${var.resource_group_name}"
 
   tags {
-    environment = "helloCloud"
+    environment = "${var.environment}"
   }
 }
 
-resource "azurerm_subnet" "vmss" {
-  name = "vmss-subnet"
-  resource_group_name = "${azurerm_resource_group.vmss.name}"
-  virtual_network_name = "${azurerm_virtual_network.vmss.name}"
-  address_prefix = "10.0.2.0/24"
+resource "azurerm_subnet" "subnet" {
+  name = "helloCloudSubnet"
+  resource_group_name = "${var.resource_group_name}"
+  virtual_network_name = "${azurerm_virtual_network.vnet.name}"
+  address_prefix = "${var.subnet1_cidr}"
 }
 
-resource "azurerm_public_ip" "vmss" {
+
+resource "azurerm_public_ip" "publicIp" {
   name = "vmss-public-ip"
   location = "${var.location}"
-  resource_group_name = "${azurerm_resource_group.vmss.name}"
+  resource_group_name = "${var.resource_group_name}"
   public_ip_address_allocation = "static"
-  domain_name_label = "${azurerm_resource_group.vmss.name}"
+  #Domain must be lower-case. Originally used resource group name.
+  domain_name_label = "lapis-hello-cloud"
 
   tags {
     environment = "helloCloud"
   }
 }
 
-resource "azurerm_lb" "vmss" {
+resource "azurerm_lb" "loadBalancer" {
   name = "vmss-lb"
   location = "${var.location}"
-  resource_group_name = "${azurerm_resource_group.vmss.name}"
+  resource_group_name = "${var.resource_group_name}"
 
   frontend_ip_configuration {
     name = "PublicIPAddress"
-    public_ip_address_id = "${azurerm_public_ip.vmss.id}"
+    public_ip_address_id = "${azurerm_public_ip.publicIp.id}"
   }
 
   tags {
-    environment = "codelab"
+    environment = "helloCloud"
   }
 }
 
+
 resource "azurerm_lb_backend_address_pool" "bpepool" {
-  resource_group_name = "${azurerm_resource_group.vmss.name}"
-  loadbalancer_id = "${azurerm_lb.vmss.id}"
+  resource_group_name = "${var.resource_group_name}"
+  loadbalancer_id = "${azurerm_lb.loadBalancer.id}"
   name = "BackEndAddressPool"
 }
 
 resource "azurerm_lb_probe" "vmss" {
-  resource_group_name = "${azurerm_resource_group.vmss.name}"
-  loadbalancer_id = "${azurerm_lb.vmss.id}"
+  resource_group_name = "${var.resource_group_name}"
+  loadbalancer_id = "${azurerm_lb.loadBalancer.id}"
   name = "ssh-running-probe"
   port = "${var.application_port}"
 }
 
 resource "azurerm_lb_rule" "lbnatrule" {
-  resource_group_name = "${azurerm_resource_group.vmss.name}"
-  loadbalancer_id = "${azurerm_lb.vmss.id}"
+  resource_group_name = "${var.resource_group_name}"
+  loadbalancer_id = "${azurerm_lb.loadBalancer.id}"
   name = "http"
   protocol = "Tcp"
   frontend_port = "${var.application_port}"
@@ -78,19 +72,10 @@ resource "azurerm_lb_rule" "lbnatrule" {
   probe_id = "${azurerm_lb_probe.vmss.id}"
 }
 
-data "azurerm_resource_group" "image" {
-  name = "myResourceGroup"
-}
-
-data "azurerm_image" "image" {
-  name = "myPackerImage"
-  resource_group_name = "${data.azurerm_resource_group.image.name}"
-}
-
 resource "azurerm_virtual_machine_scale_set" "vmss" {
   name = "vmscaleset"
   location = "${var.location}"
-  resource_group_name = "${azurerm_resource_group.vmss.name}"
+  resource_group_name = "${var.resource_group_name}"
   upgrade_policy_mode = "Manual"
 
   sku {
@@ -100,7 +85,7 @@ resource "azurerm_virtual_machine_scale_set" "vmss" {
   }
 
   storage_profile_image_reference {
-    id = "${data.azurerm_image.image.id}"
+    id = "/subscriptions/97cb539a-2f7f-42c7-b421-8343c7e9e73e/resourceGroups/HelloCloud/providers/Microsoft.Compute/images/helloCloudImage6"
   }
 
   storage_profile_os_disk {
@@ -115,6 +100,22 @@ resource "azurerm_virtual_machine_scale_set" "vmss" {
     caching = "ReadWrite"
     create_option = "Empty"
     disk_size_gb = 10
+  }
+
+  extension {
+    name = "vmInstallExtension"
+    publisher = "Microsoft.OSTCExtensions"
+    type = "CustomScriptForLinux"
+    type_handler_version = "1.2"
+    settings = "{\"commandToExecute\": \"sh /opt/webapp/start_server.sh\"}"
+  }
+
+  extension {
+    name = "MSILinuxExtension"
+    publisher = "Microsoft.ManagedIdentity"
+    type = "ManagedIdentityExtensionForLinux"
+    type_handler_version = "1.0"
+    settings = "{\"port\": 50342}"
   }
 
   os_profile {
@@ -138,13 +139,13 @@ resource "azurerm_virtual_machine_scale_set" "vmss" {
 
     ip_configuration {
       name = "IPConfiguration"
-      subnet_id = "${azurerm_subnet.vmss.id}"
+      subnet_id = "${azurerm_subnet.subnet.id}"
       load_balancer_backend_address_pool_ids = [
         "${azurerm_lb_backend_address_pool.bpepool.id}"]
     }
   }
 
   tags {
-    environment = "codelab"
+    environment = "helloCloud"
   }
 }

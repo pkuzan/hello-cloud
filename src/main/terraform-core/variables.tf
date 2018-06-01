@@ -41,11 +41,3 @@ variable "subnet1_cidr" {
 variable "environment" {
   description = "Enter an environment e.g. DEV, UAT, PROD"
 }
-
-variable "application_port" {
-  description = "Enter application port e.g. 80"
-}
-
-variable "ssh_key_data" {
-  description = "Enter ssh public key"
-}
