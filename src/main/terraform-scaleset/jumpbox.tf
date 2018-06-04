@@ -17,7 +17,7 @@ resource "azurerm_network_interface" "jumpbox" {
 
   ip_configuration {
     name = "IPConfiguration"
-    subnet_id = "${azurerm_subnet.subnet.id}"
+    subnet_id = "/subscriptions/${var.subscription_id}/resourceGroups/${var.resource_group_name}/providers/Microsoft.Network/virtualNetworks/helloCloudVnet/subnets/helloCloudSubnet"
     private_ip_address_allocation = "dynamic"
     public_ip_address_id = "${azurerm_public_ip.jumpbox.id}"
   }
@@ -36,7 +36,7 @@ resource "azurerm_virtual_machine" "jumpbox" {
   vm_size = "Standard_DS1_v2"
 
   storage_image_reference {
-    id = "/subscriptions/97cb539a-2f7f-42c7-b421-8343c7e9e73e/resourceGroups/HelloCloud/providers/Microsoft.Compute/images/jumpBoxImage2"
+    id = "/subscriptions/${var.subscription_id}/resourceGroups/${var.resource_group_name}/providers/Microsoft.Compute/images/jumpBoxImage2"
   }
 
   storage_os_disk {

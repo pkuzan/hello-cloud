@@ -1,23 +1,3 @@
-resource "azurerm_virtual_network" "vnet" {
-  name = "helloCloudVnet"
-  address_space = [
-    "${var.vnet_cidr}"]
-  location = "${var.location}"
-  resource_group_name = "${var.resource_group_name}"
-
-  tags {
-    environment = "${var.environment}"
-  }
-}
-
-resource "azurerm_subnet" "subnet" {
-  name = "helloCloudSubnet"
-  resource_group_name = "${var.resource_group_name}"
-  virtual_network_name = "${azurerm_virtual_network.vnet.name}"
-  address_prefix = "${var.subnet1_cidr}"
-}
-
-
 resource "azurerm_public_ip" "publicIp" {
   name = "vmss-public-ip"
   location = "${var.location}"
@@ -85,7 +65,7 @@ resource "azurerm_virtual_machine_scale_set" "vmss" {
   }
 
   storage_profile_image_reference {
-    id = "/subscriptions/97cb539a-2f7f-42c7-b421-8343c7e9e73e/resourceGroups/HelloCloud/providers/Microsoft.Compute/images/helloCloudImage6"
+    id = "/subscriptions/${var.subscription_id}/resourceGroups/${var.resource_group_name}/providers/Microsoft.Compute/images/helloCloudImage6"
   }
 
   storage_profile_os_disk {
@@ -139,7 +119,7 @@ resource "azurerm_virtual_machine_scale_set" "vmss" {
 
     ip_configuration {
       name = "IPConfiguration"
-      subnet_id = "${azurerm_subnet.subnet.id}"
+      subnet_id = "/subscriptions/${var.subscription_id}/resourceGroups/${var.resource_group_name}/providers/Microsoft.Network/virtualNetworks/helloCloudVnet/subnets/helloCloudSubnet"
       load_balancer_backend_address_pool_ids = [
         "${azurerm_lb_backend_address_pool.bpepool.id}"]
     }
