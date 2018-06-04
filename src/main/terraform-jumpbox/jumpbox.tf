@@ -48,8 +48,8 @@ resource "azurerm_virtual_machine" "jumpbox" {
 
   os_profile {
     computer_name = "jumpbox"
-    admin_username = "azureuser"
-    admin_password = "Password1234!"
+    admin_username = "${var.vm_username}"
+    admin_password = "${var.vm_password}"
   }
 
   os_profile_linux_config {

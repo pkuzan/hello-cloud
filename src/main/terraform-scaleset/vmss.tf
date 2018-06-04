@@ -26,7 +26,6 @@ resource "azurerm_lb" "loadBalancer" {
   }
 }
 
-
 resource "azurerm_lb_backend_address_pool" "bpepool" {
   resource_group_name = "${var.resource_group_name}"
   loadbalancer_id = "${azurerm_lb.loadBalancer.id}"
@@ -100,8 +99,8 @@ resource "azurerm_virtual_machine_scale_set" "vmss" {
 
   os_profile {
     computer_name_prefix = "vmlab"
-    admin_username = "azureuser"
-    admin_password = "Passwword1234"
+    admin_username = "${var.vm_username}"
+    admin_password = "${var.vm_password}"
   }
 
   os_profile_linux_config {
