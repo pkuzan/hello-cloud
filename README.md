@@ -42,7 +42,7 @@ ssh_key_data = "ssh-rsa XXX"
 
 To run Terraform the terraform scripts, the secret.tfvars needs to be passed as a -var parameter
 
-This will initialized the Azure provider.
+To initialize the Azure provider.
 ```
 terraform init \
 -var-file="secret.ftvars"
