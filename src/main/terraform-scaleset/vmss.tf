@@ -4,7 +4,7 @@ resource "azurerm_public_ip" "publicIp" {
   resource_group_name = "${var.resource_group_name}"
   public_ip_address_allocation = "static"
   #Domain must be lower-case. Originally used resource group name.
-  domain_name_label = "lapis-hello-cloud"
+  domain_name_label = "lapis-hello-cloud-1"
 
   tags {
     environment = "helloCloud"
@@ -118,7 +118,7 @@ resource "azurerm_virtual_machine_scale_set" "vmss" {
 
     ip_configuration {
       name = "IPConfiguration"
-      subnet_id = "/subscriptions/${var.subscription_id}/resourceGroups/${var.resource_group_name}/providers/Microsoft.Network/virtualNetworks/helloCloudVnet/subnets/helloCloudSubnet"
+      subnet_id = "${var.subnet_id}"
       load_balancer_backend_address_pool_ids = [
         "${azurerm_lb_backend_address_pool.bpepool.id}"]
     }

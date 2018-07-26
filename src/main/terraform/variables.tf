@@ -30,30 +30,30 @@ variable "resource_group_name" {
   description = "Resource group name that will contain various resources"
 }
 
-variable "vnet_cidr" {
-  description = "CIDR block for Virtual Network"
-}
-
-variable "subnet1_cidr" {
-  description = "CIDR block for Subnet within a Virtual Network"
-}
-
-variable "vm_username" {
-  description = "Enter admin username to SSH into Linux VM"
-}
-
-variable "vm_password" {
-  description = "Enter admin password to SSH into VM"
+variable "subnet_id" {
+  description = "Subnet ID"
 }
 
 variable "environment" {
   description = "Enter an environment e.g. DEV, UAT, PROD"
 }
 
+variable "application_port" {
+  description = "Enter application port e.g. 80"
+}
+
 variable "ssh_key_data" {
-  description = "Enter a key-pair public key"
+  description = "Enter ssh public key"
+}
+
+variable "vm_username" {
+  description = "Enter VM username"
+}
+
+variable "vm_password" {
+  description = "Enter VM password"
 }
 
 variable "storage_account_name" {
-  description = "Enter a storage account name"
+  description = "Storage Account Name"
 }

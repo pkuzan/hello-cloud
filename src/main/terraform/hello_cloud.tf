@@ -1,70 +1,9 @@
-resource "azurerm_resource_group" "resourcegroup" {
-  name = "${var.resource_group_name}"
-  location = "${var.location}"
-
-  tags {
-    environment = "${var.environment}"
-  }
-}
-
-resource "azurerm_virtual_network" "vnet" {
-  name = "helloCloudVnet"
-  address_space = [
-    "${var.vnet_cidr}"]
-  location = "${var.location}"
-  resource_group_name = "${azurerm_resource_group.resourcegroup.name}"
-
-  tags {
-    environment = "${var.environment}"
-  }
-}
-
-resource "azurerm_subnet" "subnet" {
-  name = "helloCloudSubnet"
-  resource_group_name = "${azurerm_resource_group.resourcegroup.name}"
-  virtual_network_name = "${azurerm_virtual_network.vnet.name}"
-  address_prefix = "${var.subnet1_cidr}"
-}
 
 resource "azurerm_public_ip" "publicip" {
   name = "helloCloudPublicIP"
   location = "${var.location}"
-  resource_group_name = "${azurerm_resource_group.resourcegroup.name}"
+  resource_group_name = "${var.resource_group_name}"
   public_ip_address_allocation = "dynamic"
-
-  tags {
-    environment = "${var.environment}"
-  }
-}
-
-resource "azurerm_network_security_group" "nsg" {
-  name = "helloCloudNetworkSecurityGroup"
-  location = "${var.location}"
-  resource_group_name = "${azurerm_resource_group.resourcegroup.name}"
-
-  security_rule {
-    name = "SSH"
-    priority = 1002
-    direction = "Inbound"
-    access = "Allow"
-    protocol = "Tcp"
-    source_port_range = "*"
-    destination_port_range = "22"
-    source_address_prefix = "*"
-    destination_address_prefix = "*"
-  }
-
-  security_rule {
-    name = "HTTP"
-    priority = 1001
-    direction = "Inbound"
-    access = "Allow"
-    protocol = "Tcp"
-    source_port_range = "*"
-    destination_port_range = "80"
-    source_address_prefix = "*"
-    destination_address_prefix = "*"
-  }
 
   tags {
     environment = "${var.environment}"
@@ -74,12 +13,11 @@ resource "azurerm_network_security_group" "nsg" {
 resource "azurerm_network_interface" "nic" {
   name = "helloCloudNIC"
   location = "${var.location}"
-  resource_group_name = "${azurerm_resource_group.resourcegroup.name}"
-  network_security_group_id = "${azurerm_network_security_group.nsg.id}"
+  resource_group_name = "${var.resource_group_name}"
 
   ip_configuration {
     name = "myNicConfiguration"
-    subnet_id = "${azurerm_subnet.subnet.id}"
+    subnet_id = "${var.subnet_id}"
     private_ip_address_allocation = "dynamic"
     public_ip_address_id = "${azurerm_public_ip.publicip.id}"
   }
@@ -93,7 +31,7 @@ resource "azurerm_network_interface" "nic" {
 resource "azurerm_virtual_machine" "virtual_machine" {
   name = "helloCloudVM"
   location = "${var.location}"
-  resource_group_name = "${azurerm_resource_group.resourcegroup.name}"
+  resource_group_name = "${var.resource_group_name}"
   network_interface_ids = [
     "${azurerm_network_interface.nic.id}"]
   vm_size = "Standard_DS1_v2"
@@ -107,7 +45,10 @@ resource "azurerm_virtual_machine" "virtual_machine" {
   }
 
   storage_image_reference {
-    id = "/subscriptions/97cb539a-2f7f-42c7-b421-8343c7e9e73e/resourceGroups/HelloCloud/providers/Microsoft.Compute/images/helloCloudImage7"
+    publisher = "RedHat"
+    offer = "RHEL"
+    sku = "7.3"
+    version = "latest"
   }
 
   os_profile {
